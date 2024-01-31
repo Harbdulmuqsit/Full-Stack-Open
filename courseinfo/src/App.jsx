@@ -36,6 +36,22 @@ const App = () => {
     {name: 'Jimmy', Species:'fish'},
   ]
 
+   var orders = [
+    {amount: 200},
+    {amount: 400},
+    {amount: 100},
+    {amount: 325}
+   ]
+
+   var totalAmount = orders.reduce((sum, order) =>  (sum + order.amount) , 0)
+
+  //  var totalAmount = 0;
+
+  //  for(var i = 0; i < orders.length; i++){
+  //   totalAmount += orders[i].amount
+  //  }
+
+   console.log(totalAmount)
   // var dog = [];
   // for (let i = 0; i < animals.length; i++) {
   //   if( animals[i].Species === 'dog')
@@ -46,8 +62,17 @@ const App = () => {
   //   return animal.Species === 'dog' 
   // })
 
+  var names = animals.map((x)=> x.name);
+  console.log(names)
+  
   // var dog = [];
   // console.log(dog)
+
+  // var add = function (d){ return d + 3}; 
+  // var parameter = add;
+  // console.log(parameter(20))
+
+  
   return (
     <>
     <div>
