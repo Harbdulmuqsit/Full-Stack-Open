@@ -1,4 +1,3 @@
-
 // const Display = (props) => {
 //   console.log(props)
 //   const {text} = props;
@@ -51,7 +50,8 @@ const App = () => {
   //   totalAmount += orders[i].amount
   //  }
 
-   console.log(totalAmount)
+   console.log(totalAmount);
+
   // var dog = [];
   // for (let i = 0; i < animals.length; i++) {
   //   if( animals[i].Species === 'dog')
@@ -73,20 +73,20 @@ const App = () => {
   // console.log(parameter(20))
 
   
-  return (
+  return (   
     <>
-    <div>
-     {/* {animals.map((dog, i)=> (
-      <div key={i}>
-        <p><b>Name:</b> {dog.name}, <b>Species:</b>  {dog.Species}</p>
-      </div>
-     ))}  */}
-    {animals.filter((animal) => animal.Species === 'dog').map((anl, index) => {
-      return <div key={index}>
-        <p><b>Name:</b> {anl.name}, <b>Species:</b> {anl.Species}</p>
-      </div>
-    })}
-     </div>
+      <div>
+          {/* {animals.map((dog, i)=> (
+            <div key={i}>
+              <p><b>Name:</b> {dog.name}, <b>Species:</b>  {dog.Species}</p>
+            </div>
+          ))}  */}
+          {animals.filter((animal) => animal.Species === 'dog').map((anl, index) => {
+            return <div key={index}>
+              <p><b>Name:</b> {anl.name}, <b>Species:</b> {anl.Species}</p>
+            </div>
+          })}
+        </div>
     </>
   )
 }
