@@ -1,71 +1,99 @@
-import { useState } from 'react'
-import Filter from './Components/Filter'
-import Persons from './Components/Persons'
-import PersonForm from './Components/PersonForm'
+// import { useState } from 'react'
+// import Filter from './Components/Filter'
+// import Persons from './Components/Persons'
+// import PersonForm from './Components/PersonForm'
 
-const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
-  const [number, setNumber] = useState('') 
-  const [newName, setNewName] = useState('')
 
-  const handleChangeName = (e) => {
-    setNewName(e.target.value);
+// const App = () => {
+//   const [persons, setPersons] = useState([
+//     { name: 'Arto Hellas', number: '040-123456', id: 1 },
+//     { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+//     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+//     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+//   ])
+//   const [number, setNumber] = useState('') 
+//   const [newName, setNewName] = useState('')
+
+
+//   const handleChangeName = (e) => {
+//     setNewName(e.target.value);
     
-  }
+//   }
 
-  const handleChangeNumber = (e) => {
-    setNumber(e.target.value)
-  }
+//   const handleChangeNumber = (e) => {
+//     setNumber(e.target.value)
+//   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); 
-  const Available = persons.some(persons => persons.name === newName || persons.number === number); 
+//   const handleSubmit = (e) => {
+//     e.preventDefault(); 
+//   const Available = persons.some(persons => persons.name === newName || persons.number === number); 
   
 
-    if(Available){
-      alert(`${newName}: ${number} is already added to phonebook`)
-    }
-     else{
-      setPersons([...persons, {name: newName, number}])
-      setNewName('');  
-      setNumber('')
-    }
-  };
+//     if(Available){
+//       alert(`${newName}: ${number} is already added to phonebook`)
+//     }
+//      else{
+//       setPersons([...persons, {name: newName, number}])
+//       setNewName('');  
+//       setNumber('')
+//     }
+//   };
 
- 
+
+//   return (
+//     <div>
+//       <h2>Phonebook</h2>
+//         <Filter person={persons}/>
+      
+
+//         <PersonForm 
+//           handleSubmit={handleSubmit}
+//           newName={newName}
+//           handleChangeName={handleChangeName}
+//           number={number}
+//           handleChangeNumber={handleChangeNumber}
+//         />
+    
+//         <h2>Numbers</h2>
+//           <Persons person={persons}/>
+
+//       <div>debug: {newName}: {number}</div>
+           
+//      </div>
+
+//   )
+// }
+// export default App
+
+import { useState, useEffect } from "react";
+import axios from 'axios';
+// import Note from "./Components/Note";
+
+const App = () => {
+  const [persons, setPersons] = useState([])
+  // const [newNote, setNewNote] = useState('')
+  // const [showAll, setShowAll] = useState(true)
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+  console.log('render', persons.length, 'notes')
 
   return (
     <div>
-      <h2>Phonebook</h2>
-          <Filter person={persons}/>
-      
-
-        <PersonForm 
-          handleSubmit={handleSubmit}
-          newName={newName}
-          handleChangeName={handleChangeName}
-          number={number}
-          handleChangeNumber={handleChangeNumber}
-        />
-    
-        <h2>Numbers</h2>
-          <Persons person={persons}/>
-
-      <div>debug: {newName}: {number}</div>
-
-
-           
-     </div>
-
+      {persons.map(persons => 
+      <div key={persons.id}>
+       <p> {persons.id}. {persons.content}</p>
+      </div>
+      )}
+    </div>
   )
 }
-
-
-
 
 export default App
