@@ -1,97 +1,86 @@
-// import { useState } from 'react'
-// import Filter from './Components/Filter'
-// import Persons from './Components/Persons'
-// import PersonForm from './Components/PersonForm'
-
-
-// const App = () => {
-//   const [persons, setPersons] = useState([
-//     { name: 'Arto Hellas', number: '040-123456', id: 1 },
-//     { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-//     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-//     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-//   ])
-//   const [number, setNumber] = useState('') 
-//   const [newName, setNewName] = useState('')
-
-
-//   const handleChangeName = (e) => {
-//     setNewName(e.target.value);
-    
-//   }
-
-//   const handleChangeNumber = (e) => {
-//     setNumber(e.target.value)
-//   }
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault(); 
-//   const Available = persons.some(persons => persons.name === newName || persons.number === number); 
-  
-
-//     if(Available){
-//       alert(`${newName}: ${number} is already added to phonebook`)
-//     }
-//      else{
-//       setPersons([...persons, {name: newName, number}])
-//       setNewName('');  
-//       setNumber('')
-//     }
-//   };
-
-
-//   return (
-//     <div>
-//       <h2>Phonebook</h2>
-//         <Filter person={persons}/>
-      
-
-//         <PersonForm 
-//           handleSubmit={handleSubmit}
-//           newName={newName}
-//           handleChangeName={handleChangeName}
-//           number={number}
-//           handleChangeNumber={handleChangeNumber}
-//         />
-    
-//         <h2>Numbers</h2>
-//           <Persons person={persons}/>
-
-//       <div>debug: {newName}: {number}</div>
-           
-//      </div>
-
-//   )
-// }
-// export default App
-
-import { useState, useEffect } from "react";
-import axios from 'axios';
-// import Note from "./Components/Note";
+import { useState, useEffect } from 'react'
+// import axios from 'axios';
+import Note from './Components/Note'
+import noteService from './Services/Notes'
 
 const App = () => {
-  const [persons, setPersons] = useState([])
-  // const [newNote, setNewNote] = useState('')
-  // const [showAll, setShowAll] = useState(true)
+  const [notes, setNotes] = useState([])
+  const [newNote, setNewNote] = useState('')
+  const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    noteService
+      .getAll()
+      .then(initialNotes => {
+        setNotes(initialNotes)
       })
   }, [])
-  console.log('render', persons.length, 'notes')
+
+  const addNote = (event) => {
+    event.preventDefault()
+    const noteObject = {
+      content: newNote,
+      important: Math.random() > 0.5,
+    }
+  
+    noteService
+      .create(noteObject)
+        .then(returnedNote => {
+        setNotes(notes.concat(returnedNote))
+        setNewNote('')
+      })
+  }
+
+  const toggleImportanceOf = id => {
+    const url = `http://localhost:3001/notes/${id}`
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+  
+    noteService
+      .update(id, changedNote)
+        .then(returnedNote => {
+        setNotes(notes.map(note => note.id !== id ? note : returnedNote))
+      })
+      .catch(error => {
+        alert(
+          `the note '${note.content}' was already deleted from server`
+        )
+        setNotes(notes.filter(n => n.id !== id))
+      })
+  }
+
+  const handleNoteChange = (event) => {
+    setNewNote(event.target.value)
+  }
+
+  const notesToShow = showAll
+    ? notes
+    : notes.filter(note => note.important)
 
   return (
     <div>
-      {persons.map(persons => 
-      <div key={persons.id}>
-       <p> {persons.id}. {persons.content}</p>
-      </div>
-      )}
+      <h1>Notes</h1>
+      <div>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? 'important' : 'all' }
+        </button>
+      </div>      
+      <ul>
+        {notesToShow.map(note => 
+          <Note
+            key={note.id}
+            note={note}
+            toggleImportance={() => toggleImportanceOf(note.id)}
+          />
+        )}
+      </ul>
+      <form onSubmit={addNote}>
+        <input
+          value={newNote}
+          onChange={handleNoteChange}
+        />
+        <button type="submit">save</button>
+      </form> 
     </div>
   )
 }
